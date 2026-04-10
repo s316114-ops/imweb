@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IM Web Labs</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            background: -webkit-linear-gradient(45deg, #ff9ff3, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .card h2 {
+            margin: 0 0 1rem 0;
+            font-size: 1.8rem;
+            color: #feca57;
+        }
+        .card p {
+            margin: 0;
+            opacity: 0.8;
+            line-height: 1.6;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <h1>IM Web 作品集</h1>
+    <div class="container">
+        <a href="lab1/index.html" class="card">
+            <h2>Lab 1</h2>
+            <p>🎶 猜歌遊戲<br>Guess the Song</p>
+        </a>
+        <a href="lab2/index.html" class="card">
+            <h2>Lab 2</h2>
+            <p>📸 照相亭<br>Photo Booth</p>
+        </a>
+        <a href="lab3/index.html" class="card">
+            <h2>Lab 3</h2>
+            <p>✨ 自己發想<br>Creative Project</p>
+        </a>
+    </div>
+</body>
+</html>
