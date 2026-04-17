@@ -3,53 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 2 - 照相亭</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #2b1055, #7597de); 
-            color: #ffffff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        .back { 
-            position: absolute; 
-            top: 2rem; 
-            left: 2rem; 
-            color: #fff; 
-            text-decoration: none; 
-            font-weight: 600; 
-            opacity: 0.7; 
-            transition: 0.3s; 
-            padding: 10px 20px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-        }
-        .back:hover { 
-            opacity: 1; 
-            background: rgba(255,255,255,0.2); 
-        }
-        h1 { 
-            background: -webkit-linear-gradient(45deg, #ff9a9e, #fecfef); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-size: 3rem; 
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-    </style>
+    <title>📸 Lab 2 - 高級相片亭</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <a href="../index.html" class="back">← 回到主頁</a>
-    <h1>📸 Lab 2: 照相亭</h1>
-    <p>即將推出... (Coming Soon)</p>
+    <div class="container">
+        <a href="../index.html" class="back-btn">← 回到主頁</a>
+        
+        <header>
+            <h1>📸 Photo Booth</h1>
+            <p>捕捉屬於你的精彩瞬間</p>
+        </header>
+
+        <main>
+            <div class="main-view">
+                <video id="video" autoplay playsinline></video>
+                <div id="countdown">3</div>
+                <div id="flash" class="flash"></div>
+            </div>
+
+            <div class="controls">
+                <button id="startCameraBtn">1. 開啟鏡頭</button>
+                <button id="startBurstBtn" class="primary">2. 開始三連拍</button>
+                
+                <select id="filterSelect">
+                    <option value="filter-none">無濾鏡 (None)</option>
+                    <option value="filter-grayscale">黑白 (B&W)</option>
+                    <option value="filter-sepia">復古 (Sepia)</option>
+                    <option value="filter-vibrant">鮮豔 (Vibrant)</option>
+                    <option value="filter-vintage">懷舊 (Vintage)</option>
+                    <option value="filter-invert">負片 (Invert)</option>
+                    <option value="filter-cyan">青色調 (Cyan)</option>
+                </select>
+
+                <button id="downloadBtn" class="success">3. 下載組合圖</button>
+            </div>
+
+            <div class="gallery-header" style="margin-top: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem;">
+                <h2>最近拍攝</h2>
+            </div>
+            <div id="gallery" class="gallery">
+                <!-- Captured images will appear here -->
+                <div class="photo-card" style="display: flex; align-items: center; justify-content: center; opacity: 0.3;">
+                    <span>無照片</span>
+                </div>
+                <div class="photo-card" style="display: flex; align-items: center; justify-content: center; opacity: 0.3;">
+                    <span>無照片</span>
+                </div>
+                <div class="photo-card" style="display: flex; align-items: center; justify-content: center; opacity: 0.3;">
+                    <span>無照片</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
