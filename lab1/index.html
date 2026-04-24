@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎵 Lab 1 - 極速猜歌王</title>
+    <title>💜 Lab 1 - BTS 猜歌挑戰</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +12,7 @@
 
     <div class="container">
         <header>
-            <h1>🎵 Guess the Song</h1>
+            <h1>💜 BTS 猜歌挑戰</h1>
         </header>
 
         <main id="game-screen" class="game-card">
@@ -36,12 +36,19 @@
             </div>
 
             <div id="feedback" class="feedback"></div>
+
+            <div class="game-controls" style="margin-top: 2rem; display: flex; gap: 1rem; justify-content: center;">
+                <button id="pause-game-btn" class="restart-btn" style="padding: 0.8rem 1.5rem; font-size: 1rem; background: var(--secondary); color: white;">暫停</button>
+                <button id="in-game-restart-btn" class="restart-btn" style="padding: 0.8rem 1.5rem; font-size: 1rem;">重新開始</button>
+                <button id="cancel-game-btn" class="restart-btn" style="padding: 0.8rem 1.5rem; font-size: 1rem; background: var(--danger); color: white;">取消遊戲</button>
+            </div>
         </main>
 
         <section id="result-screen" class="game-card hidden">
             <h2>遊戲結束！</h2>
             <p>您的最終得分是：</p>
             <div id="final-score" class="final-score">0</div>
+            <p id="final-message" style="margin-bottom: 2rem; font-weight: 600; font-size: 1.2rem;"></p>
             <button id="restart-btn" class="restart-btn">再玩一次</button>
         </section>
     </div>
