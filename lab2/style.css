@@ -62,6 +62,27 @@ header h1 {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.05);
 }
 
+.main-view::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -50%;
+    width: 200%; height: 200%;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 50%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    animation: scanline 4s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+
+@keyframes scanline {
+    0% { transform: translateY(-50%); }
+    100% { transform: translateY(50%); }
+}
+
 #video {
     width: 100%;
     height: 100%;
@@ -265,4 +286,53 @@ select:hover {
 
 .back-btn:hover {
     color: white;
+}
+
+/* Floating Particles Background */
+.particles {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #00d68f;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00d68f, 0 0 20px #00d68f;
+    animation: rise 15s infinite linear;
+    bottom: -20px;
+    opacity: 0.5;
+}
+
+.particle:nth-child(even) {
+    background: #ff3d71;
+    box-shadow: 0 0 10px #ff3d71, 0 0 20px #ff3d71;
+}
+
+.particle:nth-child(3n) {
+    background: #3366ff;
+    box-shadow: 0 0 10px #3366ff, 0 0 20px #3366ff;
+}
+
+.particle:nth-child(1) { left: 10%; animation-duration: 12s; animation-delay: 1s; }
+.particle:nth-child(2) { left: 20%; animation-duration: 18s; animation-delay: 5s; }
+.particle:nth-child(3) { left: 30%; animation-duration: 15s; animation-delay: 2s; }
+.particle:nth-child(4) { left: 40%; animation-duration: 10s; animation-delay: 8s; }
+.particle:nth-child(5) { left: 50%; animation-duration: 16s; animation-delay: 4s; }
+.particle:nth-child(6) { left: 60%; animation-duration: 14s; animation-delay: 7s; }
+.particle:nth-child(7) { left: 70%; animation-duration: 19s; animation-delay: 3s; }
+.particle:nth-child(8) { left: 80%; animation-duration: 11s; animation-delay: 6s; }
+.particle:nth-child(9) { left: 90%; animation-duration: 17s; animation-delay: 9s; }
+.particle:nth-child(10) { left: 5%; animation-duration: 13s; animation-delay: 0s; }
+
+@keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    20% { opacity: 0.8; }
+    80% { opacity: 0.8; }
+    100% { transform: translateY(-120vh) scale(1.5); opacity: 0; }
 }

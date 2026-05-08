@@ -3,53 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 3 - 自己發想</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
-        body { 
-            margin: 0; 
-            font-family: 'Inter', sans-serif; 
-            background: linear-gradient(135deg, #141e30, #243b55); 
-            color: #ffffff; 
-            min-height: 100vh; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-        }
-        .back { 
-            position: absolute; 
-            top: 2rem; 
-            left: 2rem; 
-            color: #fff; 
-            text-decoration: none; 
-            font-weight: 600; 
-            opacity: 0.7; 
-            transition: 0.3s; 
-            padding: 10px 20px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-        }
-        .back:hover { 
-            opacity: 1; 
-            background: rgba(255,255,255,0.2); 
-        }
-        h1 { 
-            background: -webkit-linear-gradient(45deg, #fceabb, #f8b500); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            font-size: 3rem; 
-            margin-bottom: 1rem;
-        }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-        }
-    </style>
+    <title>🕹️ Lab 3 - Zero-Boundary Arcade</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
-    <a href="../index.html" class="back">← 回到主頁</a>
-    <h1>✨ Lab 3: 自己發想</h1>
-    <p>即將推出... (Coming Soon)</p>
+    <!-- Background Grid Effect -->
+    <div class="cyber-grid"></div>
+
+    <a href="../index.html" class="main-back-btn">← 回到主頁</a>
+
+    <!-- Arcade Menu -->
+    <div id="arcade-menu" class="container">
+        <header>
+            <h1 class="glitch" data-text="零界遊戲廳">零界遊戲廳</h1>
+            <p class="subtitle">請選擇遊戲</p>
+        </header>
+
+        <div class="games-grid">
+            <div class="game-card" data-game="1">
+                <div class="card-icon">🌌</div>
+                <h2>記憶幻境</h2>
+                <p>考驗記憶力</p>
+            </div>
+            <div class="game-card" data-game="2">
+                <div class="card-icon">🏃‍♂️</div>
+                <h2>跑酷</h2>
+                <p>極速閃避障礙</p>
+            </div>
+            <div class="game-card" data-game="3">
+                <div class="card-icon">🧱</div>
+                <h2>稜鏡粉碎者</h2>
+                <p>粉碎所有賽博磚塊</p>
+            </div>
+            <div class="game-card" data-game="4">
+                <div class="card-icon">🔢</div>
+                <h2>量子矩陣 2048</h2>
+                <p>極限方塊合成</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Game Container -->
+    <div id="game-container" class="hidden">
+        <button id="back-to-menu-btn" class="back-btn">← 返回大廳</button>
+
+        <!-- Game 1: Memory Match -->
+        <div id="game-1-view" class="game-view hidden">
+            <h2 class="game-title">記憶幻境</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g1-score">0</span> / 100</span>
+                <button id="g1-restart" class="action-btn">重新開始</button>
+            </div>
+            <div id="g1-board" class="memory-board"></div>
+            <p class="controls-hint">操作說明：點擊卡片翻牌，找出所有相同的圖案</p>
+        </div>
+
+        <!-- Game 2: Cyber Run -->
+        <div id="game-2-view" class="game-view hidden">
+            <h2 class="game-title">跑酷</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g2-score">0</span></span>
+                <span>最高分：<span id="g2-highscore">0</span></span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="g2-canvas" width="800" height="300"></canvas>
+                <div id="g2-overlay" class="game-overlay">
+                    <h3>按 空白鍵 開始</h3>
+                </div>
+            </div>
+            <p class="controls-hint">操作說明：按 空白鍵 (Space) 或 向上鍵 (↑) 跳躍</p>
+        </div>
+
+        <!-- Game 3: Neon Breakout -->
+        <div id="game-3-view" class="game-view hidden">
+            <h2 class="game-title">稜鏡粉碎者</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g3-score">0</span></span>
+                <span>最高分：<span id="g3-highscore">0</span></span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="g3-canvas" width="600" height="400"></canvas>
+                <div id="g3-overlay" class="game-overlay">
+                    <h3>按 任意方向鍵 開始</h3>
+                </div>
+            </div>
+            <p class="controls-hint">操作說明：使用 左/右方向鍵 (← →) 控制擋板</p>
+        </div>
+
+        <!-- Game 4: Cyber 2048 -->
+        <div id="game-4-view" class="game-view hidden">
+            <h2 class="game-title">量子矩陣 2048</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g4-score">0</span></span>
+                <button id="g4-restart" class="action-btn">重新開始</button>
+            </div>
+            <div class="game-2048-container">
+                <div id="g4-grid" class="grid-2048"></div>
+                <div id="g4-overlay" class="game-overlay hidden">
+                    <h3 id="g4-msg">遊戲結束！</h3>
+                </div>
+            </div>
+            <p class="controls-hint">操作說明：使用 方向鍵 (↑↓←→) 滑動方塊</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>

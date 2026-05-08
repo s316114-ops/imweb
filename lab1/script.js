@@ -131,6 +131,15 @@ function handleAnswer(choice, btn) {
         btn.classList.add('correct');
         feedbackEl.innerText = '答對了！ +10';
         feedbackEl.style.color = '#1dd1a1';
+        
+        // Add Confetti Effect
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
     } else {
         score -= 5;
         btn.classList.add('wrong');
@@ -176,6 +185,21 @@ function endGame() {
     } else if (score === 50) {
         finalMessageEl.innerText = "太神啦！很棒！滿分過關 🎉";
         finalMessageEl.style.color = "#1dd1a1";
+        
+        // Big Confetti Effect
+        if (typeof confetti === 'function') {
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: Math.random(), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
     } else {
         finalMessageEl.innerText = "表現不錯喔！繼續保持 😉";
         finalMessageEl.style.color = "white";

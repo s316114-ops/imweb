@@ -181,6 +181,14 @@ header h1 {
 .option-btn.wrong {
     background: var(--danger);
     border-color: var(--danger);
+    animation: shake 0.4s ease-in-out;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
 }
 
 .feedback {
@@ -226,4 +234,35 @@ header h1 {
 .restart-btn:hover {
     transform: translateY(-3px) scale(1.02);
     box-shadow: var(--glow);
+}
+
+/* Floating Shapes Background */
+.floating-shapes {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    background: rgba(176, 92, 255, 0.15);
+    border-radius: 50%;
+    animation: float 10s infinite linear;
+    bottom: -100px;
+    box-shadow: 0 0 20px rgba(176, 92, 255, 0.2);
+}
+
+.shape:nth-child(1) { width: 50px; height: 50px; left: 10%; animation-duration: 8s; }
+.shape:nth-child(2) { width: 80px; height: 80px; left: 30%; animation-duration: 12s; animation-delay: 2s; }
+.shape:nth-child(3) { width: 40px; height: 40px; left: 70%; animation-duration: 7s; animation-delay: 4s; }
+.shape:nth-child(4) { width: 60px; height: 60px; left: 50%; animation-duration: 11s; animation-delay: 1s; }
+.shape:nth-child(5) { width: 90px; height: 90px; left: 85%; animation-duration: 14s; animation-delay: 3s; }
+.shape:nth-child(6) { width: 30px; height: 30px; left: 20%; animation-duration: 9s; animation-delay: 5s; }
+.shape:nth-child(7) { width: 70px; height: 70px; left: 60%; animation-duration: 13s; animation-delay: 6s; }
+
+@keyframes float {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
 }

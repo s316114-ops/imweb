@@ -137,6 +137,15 @@ function downloadCollage() {
                 link.download = `photobooth-collage-${Date.now()}.png`;
                 link.href = collageCanvas.toDataURL('image/png');
                 link.click();
+                
+                // Add Confetti Effect
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 150,
+                        spread: 100,
+                        origin: { y: 0.6 }
+                    });
+                }
             }
         };
         img.src = src;
