@@ -361,3 +361,22 @@ canvas {
 .tile-512 { background: #c0392b; color: white; box-shadow: 0 0 30px rgba(192,57,43,0.9); font-size: 1.2rem; }
 .tile-1024 { background: #8e44ad; color: white; box-shadow: 0 0 35px rgba(142,68,173,1); font-size: 1rem; }
 .tile-2048 { background: #fff; color: black; box-shadow: 0 0 40px #fff; font-size: 1rem; text-shadow: none; }
+
+/* --- Game 5 & Game 6 Custom Styling --- */
+#game-5-view .canvas-container {
+    border-color: var(--neon-purple);
+    box-shadow: 0 0 25px rgba(176, 38, 255, 0.4);
+}
+#game-5-view .game-title {
+    color: var(--neon-purple);
+    text-shadow: 0 0 10px var(--neon-purple);
+}
+#game-6-view .canvas-container {
+    border-color: var(--neon-pink);
+    box-shadow: 0 0 25px rgba(255, 42, 109, 0.4);
+}
+#game-6-view .game-title {
+    color: var(--neon-pink);
+    text-shadow: 0 0 10px var(--neon-pink);
+}
+

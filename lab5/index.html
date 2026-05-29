@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lab 5</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap');
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #14151f, #1e1e2f);
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+            z-index: 2;
+            padding: 3rem;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            backdrop-filter: blur(15px);
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+        }
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            margin: 0 0 1rem 0;
+            background: linear-gradient(45deg, #ff2a6d, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 42, 109, 0.2);
+        }
+        p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        .btn-back {
+            display: inline-block;
+            text-decoration: none;
+            color: #ff2a6d;
+            border: 1px solid #ff2a6d;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            background: rgba(255, 42, 109, 0.05);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-back:hover {
+            background: #ff2a6d;
+            color: #14151f;
+            box-shadow: 0 0 25px rgba(255, 42, 109, 0.4);
+            transform: translateY(-2px);
+        }
+        /* Ambient light blobs */
+        .glow-orb {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 42, 109, 0.12);
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 1;
+            pointer-events: none;
+        }
+        .orb-1 { top: -10%; left: -10%; }
+        .orb-2 { bottom: -10%; right: -10%; background: rgba(254, 202, 87, 0.12); }
+    </style>
+</head>
+<body>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="container">
+        <h1>Lab 5</h1>
+        <p>✨ 創意發想中...<br>Creative Space Under Construction</p>
+        <a href="../index.html" class="btn-back">← 返回主頁</a>
+    </div>
+</body>
+</html>

@@ -42,6 +42,16 @@
                 <h2>量子矩陣 2048</h2>
                 <p>極限方塊合成</p>
             </div>
+            <div class="game-card" data-game="5">
+                <div class="card-icon">🐍</div>
+                <h2>光速軌跡</h2>
+                <p>經典霓虹貪食蛇</p>
+            </div>
+            <div class="game-card" data-game="6">
+                <div class="card-icon">🚀</div>
+                <h2>星軌防禦者</h2>
+                <p>賽博太空射擊戰</p>
+            </div>
         </div>
     </div>
 
@@ -106,6 +116,38 @@
                 </div>
             </div>
             <p class="controls-hint">操作說明：使用 方向鍵 (↑↓←→) 滑動方塊</p>
+        </div>
+
+        <!-- Game 5: Cyber Snake -->
+        <div id="game-5-view" class="game-view hidden">
+            <h2 class="game-title">光速軌跡</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g5-score">0</span></span>
+                <span>最高分：<span id="g5-highscore">0</span></span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="g5-canvas" width="500" height="500"></canvas>
+                <div id="g5-overlay" class="game-overlay">
+                    <h3>按 任意方向鍵 開始</h3>
+                </div>
+            </div>
+            <p class="controls-hint">操作說明：使用 方向鍵 (↑↓←→) 改變移動方向</p>
+        </div>
+
+        <!-- Game 6: Cyber Shooter -->
+        <div id="game-6-view" class="game-view hidden">
+            <h2 class="game-title">星軌防禦者</h2>
+            <div class="game-stats">
+                <span>分數：<span id="g6-score">0</span></span>
+                <span>最高分：<span id="g6-highscore">0</span></span>
+            </div>
+            <div class="canvas-container">
+                <canvas id="g6-canvas" width="600" height="500"></canvas>
+                <div id="g6-overlay" class="game-overlay">
+                    <h3>按 空白鍵 開始</h3>
+                </div>
+            </div>
+            <p class="controls-hint">操作說明：使用 左右方向鍵 (← →) 移動，空白鍵 (Space) 發射雷射</p>
         </div>
     </div>
 

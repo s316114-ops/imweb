@@ -15,6 +15,8 @@ document.querySelectorAll('.game-card').forEach(card => {
 backBtn.addEventListener('click', () => {
     if(activeGameId === '2') RunGame.stop();
     if(activeGameId === '3') BreakoutGame.stop();
+    if(activeGameId === '5') SnakeGame.stop();
+    if(activeGameId === '6') ShooterGame.stop();
     
     document.getElementById(`game-${activeGameId}-view`).classList.add('hidden');
     gameContainer.classList.add('hidden');
@@ -34,6 +36,8 @@ function startGame(id) {
     if (id === '2') RunGame.init();
     if (id === '3') BreakoutGame.init();
     if (id === '4') Game2048.init();
+    if (id === '5') SnakeGame.init();
+    if (id === '6') ShooterGame.init();
 }
 
 // --- GAME 1: MEMORY MATCH ---
@@ -594,3 +598,548 @@ const Game2048 = {
 };
 
 document.getElementById('g4-restart').onclick = () => Game2048.init();
+
+
+// --- GAME 5: CYBER SNAKE ---
+const SnakeGame = {
+    canvas: document.getElementById('g5-canvas'),
+    ctx: null,
+    scoreEl: document.getElementById('g5-score'),
+    hiScoreEl: document.getElementById('g5-highscore'),
+    overlay: document.getElementById('g5-overlay'),
+    gridSize: 20,
+    tileCount: 25, // 500 / 20 = 25
+    snake: [],
+    dir: { x: 0, y: 0 },
+    nextDir: { x: 0, y: 0 },
+    food: { x: 0, y: 0 },
+    score: 0,
+    hiScore: 0,
+    isPlaying: false,
+    lastTickTime: 0,
+    tickRate: 110, // ms per tick
+    loopId: null,
+
+    init() {
+        this.ctx = this.canvas.getContext('2d');
+        this.reset();
+        this.draw();
+        this.overlay.innerHTML = `<h3>按 任意方向鍵 開始</h3>`;
+        this.overlay.classList.remove('hidden');
+
+        window.onkeydown = (e) => {
+            if (activeGameId !== '5') return;
+            if (e.key === 'ArrowUp' || e.key === 'ArrowDown' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                
+                let newDir = { x: 0, y: 0 };
+                if (e.key === 'ArrowUp') newDir = { x: 0, y: -1 };
+                if (e.key === 'ArrowDown') newDir = { x: 0, y: 1 };
+                if (e.key === 'ArrowLeft') newDir = { x: -1, y: 0 };
+                if (e.key === 'ArrowRight') newDir = { x: 1, y: 0 };
+
+                // Prevent turning directly back on oneself
+                if (this.dir.x + newDir.x !== 0 || this.dir.y + newDir.y !== 0) {
+                    this.nextDir = newDir;
+                    if (!this.isPlaying) {
+                        this.start();
+                    }
+                }
+            }
+        };
+    },
+
+    reset() {
+        this.snake = [
+            { x: 12, y: 12 },
+            { x: 12, y: 13 },
+            { x: 12, y: 14 }
+        ];
+        this.dir = { x: 0, y: -1 };
+        this.nextDir = { x: 0, y: -1 };
+        this.score = 0;
+        this.scoreEl.innerText = '0';
+        this.isPlaying = false;
+        this.spawnFood();
+        this.lastTickTime = 0;
+        cancelAnimationFrame(this.loopId);
+    },
+
+    start() {
+        this.reset();
+        this.overlay.classList.add('hidden');
+        this.isPlaying = true;
+        this.loop(0);
+    },
+
+    stop() {
+        this.isPlaying = false;
+        cancelAnimationFrame(this.loopId);
+        window.onkeydown = null;
+    },
+
+    spawnFood() {
+        let attempts = 0;
+        while (attempts < 100) {
+            let x = Math.floor(Math.random() * this.tileCount);
+            let y = Math.floor(Math.random() * this.tileCount);
+            // Make sure food is not spawned on snake
+            if (!this.snake.some(segment => segment.x === x && segment.y === y)) {
+                this.food = { x, y };
+                return;
+            }
+            attempts++;
+        }
+        // Fallback
+        this.food = { x: 5, y: 5 };
+    },
+
+    loop(timestamp) {
+        if (!this.isPlaying) return;
+        this.loopId = requestAnimationFrame((t) => this.loop(t));
+
+        if (!this.lastTickTime) this.lastTickTime = timestamp;
+        const elapsed = timestamp - this.lastTickTime;
+
+        if (elapsed >= this.tickRate) {
+            this.lastTickTime = timestamp;
+            this.update();
+            this.draw();
+        }
+    },
+
+    update() {
+        this.dir = this.nextDir;
+        const head = { x: this.snake[0].x + this.dir.x, y: this.snake[0].y + this.dir.y };
+
+        // Wall collision
+        if (head.x < 0 || head.x >= this.tileCount || head.y < 0 || head.y >= this.tileCount) {
+            this.gameOver();
+            return;
+        }
+
+        // Self collision
+        if (this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
+            this.gameOver();
+            return;
+        }
+
+        // Add new head
+        this.snake.unshift(head);
+
+        // Food collision
+        if (head.x === this.food.x && head.y === this.food.y) {
+            this.score += 10;
+            this.scoreEl.innerText = this.score;
+            this.spawnFood();
+            // speed ramp up slightly
+            this.tickRate = Math.max(70, 110 - Math.floor(this.score / 50) * 5);
+            if (typeof confetti === 'function') {
+                confetti({ particleCount: 15, spread: 40, origin: { x: this.food.x / this.tileCount, y: this.food.y / this.tileCount } });
+            }
+        } else {
+            // Remove tail
+            this.snake.pop();
+        }
+    },
+
+    draw() {
+        this.ctx.fillStyle = '#090a0f'; // Matches body background
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Grid Lines (subtle purple grid)
+        this.ctx.strokeStyle = 'rgba(176, 38, 255, 0.05)';
+        this.ctx.lineWidth = 1;
+        for (let i = 0; i <= this.tileCount; i++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(i * this.gridSize, 0);
+            this.ctx.lineTo(i * this.gridSize, this.canvas.height);
+            this.ctx.stroke();
+
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, i * this.gridSize);
+            this.ctx.lineTo(this.canvas.width, i * this.gridSize);
+            this.ctx.stroke();
+        }
+
+        // Food (neon cyan pulsing/glowing circle)
+        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = '#05d9e8';
+        this.ctx.fillStyle = '#05d9e8';
+        this.ctx.beginPath();
+        let r = this.gridSize / 2;
+        this.ctx.arc(this.food.x * this.gridSize + r, this.food.y * this.gridSize + r, r - 2, 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.shadowBlur = 0;
+
+        // Snake (neon purple glow)
+        this.snake.forEach((segment, i) => {
+            if (i === 0) {
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.shadowColor = '#b026ff';
+                this.ctx.shadowBlur = 15;
+            } else {
+                this.ctx.fillStyle = '#b026ff';
+                this.ctx.shadowBlur = 10;
+                this.ctx.shadowColor = '#b026ff';
+            }
+            this.ctx.fillRect(
+                segment.x * this.gridSize + 1,
+                segment.y * this.gridSize + 1,
+                this.gridSize - 2,
+                this.gridSize - 2
+            );
+        });
+        this.ctx.shadowBlur = 0;
+    },
+
+    gameOver() {
+        this.isPlaying = false;
+        this.overlay.innerHTML = `<h3>遊戲結束<br>分數：${this.score}<br><br><span style="font-size:1rem">按 任意方向鍵 重新開始</span></h3>`;
+        this.overlay.classList.remove('hidden');
+        if (this.score > this.hiScore) {
+            this.hiScore = this.score;
+            this.hiScoreEl.innerText = this.hiScore;
+        }
+    }
+};
+
+
+// --- GAME 6: CYBER SHOOTER ---
+const ShooterGame = {
+    canvas: document.getElementById('g6-canvas'),
+    ctx: null,
+    scoreEl: document.getElementById('g6-score'),
+    hiScoreEl: document.getElementById('g6-highscore'),
+    overlay: document.getElementById('g6-overlay'),
+
+    player: { x: 280, y: 440, w: 40, h: 25, speed: 7 },
+    bullets: [],
+    enemies: [],
+    particles: [],
+    keys: { left: false, right: false, space: false },
+    lastShotTime: 0,
+    shotCooldown: 250, // ms between shots
+    lives: 3,
+    score: 0,
+    hiScore: 0,
+    isPlaying: false,
+    loopId: null,
+    frame: 0,
+    spawnInterval: 80, // frames between spawns
+
+    init() {
+        this.ctx = this.canvas.getContext('2d');
+        this.reset();
+        this.draw();
+        this.overlay.innerHTML = `<h3>按 空白鍵 開始</h3>`;
+        this.overlay.classList.remove('hidden');
+
+        window.onkeydown = (e) => {
+            if (activeGameId !== '6') return;
+            if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                this.keys.left = true;
+            }
+            if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                this.keys.right = true;
+            }
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.keys.space = true;
+                if (!this.isPlaying) {
+                    this.start();
+                }
+            }
+        };
+
+        window.onkeyup = (e) => {
+            if (activeGameId !== '6') return;
+            if (e.code === 'ArrowLeft') this.keys.left = false;
+            if (e.code === 'ArrowRight') this.keys.right = false;
+            if (e.code === 'Space') this.keys.space = false;
+        };
+    },
+
+    reset() {
+        this.player.x = (this.canvas.width - this.player.w) / 2;
+        this.bullets = [];
+        this.enemies = [];
+        this.particles = [];
+        this.lives = 3;
+        this.score = 0;
+        this.frame = 0;
+        this.spawnInterval = 80;
+        this.scoreEl.innerText = '0';
+        this.isPlaying = false;
+        this.keys.left = false;
+        this.keys.right = false;
+        this.keys.space = false;
+        cancelAnimationFrame(this.loopId);
+    },
+
+    start() {
+        this.reset();
+        this.overlay.classList.add('hidden');
+        this.isPlaying = true;
+        this.loop();
+    },
+
+    stop() {
+        this.isPlaying = false;
+        cancelAnimationFrame(this.loopId);
+        window.onkeydown = null;
+        window.onkeyup = null;
+    },
+
+    loop() {
+        if (!this.isPlaying) return;
+        this.update();
+        this.draw();
+        this.loopId = requestAnimationFrame(() => this.loop());
+    },
+
+    spawnEnemy() {
+        const size = 20 + Math.random() * 25;
+        const x = Math.random() * (this.canvas.width - size);
+        const y = -size;
+        const speed = 1.5 + Math.random() * 2 + (this.score / 200);
+        const color = ['#ff2a6d', '#f1c40f', '#e94560', '#ff5722'][Math.floor(Math.random() * 4)];
+        const hp = size > 35 ? 2 : 1; // bigger ones take 2 hits
+        this.enemies.push({ x, y, w: size, h: size, speed, color, hp, maxHp: hp });
+    },
+
+    spawnParticles(x, y, color, count = 10) {
+        for (let i = 0; i < count; i++) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1 + Math.random() * 4;
+            this.particles.push({
+                x,
+                y,
+                dx: Math.cos(angle) * speed,
+                dy: Math.sin(angle) * speed,
+                r: 2 + Math.random() * 2,
+                color,
+                life: 1,
+                decay: 0.02 + Math.random() * 0.03
+            });
+        }
+    },
+
+    update() {
+        this.frame++;
+
+        // Spawn logic
+        const currentInterval = Math.max(25, this.spawnInterval - Math.floor(this.score / 150) * 8);
+        if (this.frame % currentInterval === 0) {
+            this.spawnEnemy();
+        }
+
+        // Move player
+        if (this.keys.left && this.player.x > 0) {
+            this.player.x -= this.player.speed;
+        }
+        if (this.keys.right && this.player.x + this.player.w < this.canvas.width) {
+            this.player.x += this.player.speed;
+        }
+
+        // Shooting
+        if (this.keys.space) {
+            const now = Date.now();
+            if (now - this.lastShotTime > this.shotCooldown) {
+                // Shoot two parallel lasers
+                this.bullets.push({
+                    x: this.player.x + 5,
+                    y: this.player.y,
+                    w: 3,
+                    h: 15,
+                    dy: -8
+                });
+                this.bullets.push({
+                    x: this.player.x + this.player.w - 8,
+                    y: this.player.y,
+                    w: 3,
+                    h: 15,
+                    dy: -8
+                });
+                this.lastShotTime = now;
+            }
+        }
+
+        // Move bullets
+        this.bullets.forEach(b => {
+            b.y += b.dy;
+        });
+        this.bullets = this.bullets.filter(b => b.y + b.h > 0);
+
+        // Move enemies
+        this.enemies.forEach(e => {
+            e.y += e.speed;
+        });
+
+        // Check enemy bottom boundaries
+        this.enemies.forEach(e => {
+            if (e.y > this.canvas.height) {
+                this.lives--;
+                this.spawnParticles(e.x + e.w/2, this.canvas.height - 10, '#ffffff', 15);
+            }
+        });
+        this.enemies = this.enemies.filter(e => e.y <= this.canvas.height);
+
+        // Particle updates
+        this.particles.forEach(p => {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.life -= p.decay;
+        });
+        this.particles = this.particles.filter(p => p.life > 0);
+
+        // Bullet-Enemy Collisions
+        for (let bIdx = this.bullets.length - 1; bIdx >= 0; bIdx--) {
+            const b = this.bullets[bIdx];
+            for (let eIdx = this.enemies.length - 1; eIdx >= 0; eIdx--) {
+                const enemy = this.enemies[eIdx];
+
+                if (b.x < enemy.x + enemy.w &&
+                    b.x + b.w > enemy.x &&
+                    b.y < enemy.y + enemy.h &&
+                    b.y + b.h > enemy.y) {
+                    
+                    this.bullets.splice(bIdx, 1);
+                    enemy.hp--;
+
+                    this.spawnParticles(b.x, b.y, '#05d9e8', 5);
+
+                    if (enemy.hp <= 0) {
+                        this.enemies.splice(eIdx, 1);
+                        this.score += enemy.maxHp * 10;
+                        this.scoreEl.innerText = this.score;
+                        this.spawnParticles(enemy.x + enemy.w / 2, enemy.y + enemy.h / 2, enemy.color, 15);
+                        
+                        if (typeof confetti === 'function' && Math.random() > 0.9) {
+                            confetti({ particleCount: 20, spread: 50, origin: { x: enemy.x / this.canvas.width, y: enemy.y / this.canvas.height } });
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        // Enemy-Player Collisions
+        for (let eIdx = this.enemies.length - 1; eIdx >= 0; eIdx--) {
+            const enemy = this.enemies[eIdx];
+            if (this.player.x < enemy.x + enemy.w &&
+                this.player.x + this.player.w > enemy.x &&
+                this.player.y < enemy.y + enemy.h &&
+                this.player.y + this.player.h > enemy.y) {
+                
+                this.enemies.splice(eIdx, 1);
+                this.lives--;
+                this.spawnParticles(this.player.x + this.player.w/2, this.player.y + this.player.h/2, '#ff2a6d', 25);
+            }
+        }
+
+        // Lives Check
+        if (this.lives <= 0) {
+            this.gameOver();
+        }
+    },
+
+    draw() {
+        this.ctx.fillStyle = '#090a0f';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Stars
+        this.ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        for (let i = 0; i < 20; i++) {
+            const y = (this.frame * 0.5 + i * 40) % this.canvas.height;
+            const x = (i * 37) % this.canvas.width;
+            this.ctx.fillRect(x, y, 1.5, 1.5);
+        }
+
+        // Draw Player
+        this.ctx.shadowBlur = 15;
+        this.ctx.shadowColor = '#05d9e8';
+        this.ctx.fillStyle = '#05d9e8';
+        this.ctx.beginPath();
+        this.ctx.moveTo(this.player.x + this.player.w / 2, this.player.y);
+        this.ctx.lineTo(this.player.x, this.player.y + this.player.h);
+        this.ctx.lineTo(this.player.x + this.player.w, this.player.y + this.player.h);
+        this.ctx.closePath();
+        this.ctx.fill();
+
+        // Thruster flame
+        if (this.frame % 4 < 2) {
+            this.ctx.fillStyle = '#ff2a6d';
+            this.ctx.shadowColor = '#ff2a6d';
+            this.ctx.beginPath();
+            this.ctx.moveTo(this.player.x + this.player.w/2 - 4, this.player.y + this.player.h);
+            this.ctx.lineTo(this.player.x + this.player.w/2, this.player.y + this.player.h + 8);
+            this.ctx.lineTo(this.player.x + this.player.w/2 + 4, this.player.y + this.player.h);
+            this.ctx.closePath();
+            this.ctx.fill();
+        }
+        this.ctx.shadowBlur = 0;
+
+        // Draw Bullets
+        this.ctx.fillStyle = '#05d9e8';
+        this.ctx.shadowBlur = 10;
+        this.ctx.shadowColor = '#05d9e8';
+        this.bullets.forEach(b => {
+            this.ctx.fillRect(b.x, b.y, b.w, b.h);
+        });
+        this.ctx.shadowBlur = 0;
+
+        // Draw Enemies
+        this.enemies.forEach(e => {
+            this.ctx.fillStyle = e.color;
+            this.ctx.shadowBlur = 10;
+            this.ctx.shadowColor = e.color;
+            this.ctx.fillRect(e.x, e.y, e.w, e.h);
+
+            if (e.maxHp > 1) {
+                this.ctx.fillStyle = '#ffffff';
+                this.ctx.shadowBlur = 0;
+                this.ctx.fillRect(e.x + 2, e.y + e.h - 5, (e.w - 4) * (e.hp / e.maxHp), 3);
+            }
+        });
+        this.ctx.shadowBlur = 0;
+
+        // Draw Particles
+        this.particles.forEach(p => {
+            this.ctx.fillStyle = p.color;
+            this.ctx.globalAlpha = p.life;
+            this.ctx.beginPath();
+            this.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+            this.ctx.fill();
+        });
+        this.ctx.globalAlpha = 1.0;
+
+        // Draw Lives HUD
+        this.ctx.fillStyle = '#ff2a6d';
+        this.ctx.shadowColor = '#ff2a6d';
+        this.ctx.shadowBlur = 8;
+        for (let i = 0; i < 3; i++) {
+            if (i < this.lives) {
+                this.ctx.beginPath();
+                this.ctx.moveTo(this.canvas.width - 25 - i * 22 + 7, 15);
+                this.ctx.lineTo(this.canvas.width - 25 - i * 22, 27);
+                this.ctx.lineTo(this.canvas.width - 25 - i * 22 + 14, 27);
+                this.ctx.closePath();
+                this.ctx.fill();
+            }
+        }
+        this.ctx.shadowBlur = 0;
+    },
+
+    gameOver() {
+        this.isPlaying = false;
+        this.overlay.innerHTML = `<h3>遊戲結束<br>分數：${this.score}<br><br><span style="font-size:1rem">按 空白鍵 重新開始</span></h3>`;
+        this.overlay.classList.remove('hidden');
+        if (this.score > this.hiScore) {
+            this.hiScore = this.score;
+            this.hiScoreEl.innerText = this.hiScore;
+        }
+    }
+};

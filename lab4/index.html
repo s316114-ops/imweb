@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Lab 4 - Cyber Bulletin Board</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Background video for AR camera mode -->
+    <video id="bg-video" autoplay playsinline muted></video>
+    <div class="camera-scanlines"></div>
+
+    <!-- Background grid -->
+    <div class="cyber-grid"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Particle effect canvas -->
+    <canvas id="particle-canvas"></canvas>
+
+    <!-- Header & Tools -->
+    <header class="board-header">
+        <a href="../index.html" class="back-btn">← 回到主頁</a>
+        <div class="brand-title-group">
+            <span class="school-badge">二林工商 資處科</span>
+            <h1 class="glitch" data-text="賽博感應留言板">賽博感應留言板</h1>
+        </div>
+        <div class="tools-container">
+            <button id="toggle-bg-cam-btn" class="action-btn-cam">開啟背景鏡頭</button>
+            <div class="filter-select-wrapper hidden" id="bg-filter-wrapper">
+                <select id="bg-camera-filter-select">
+                    <option value="matrix">濾鏡：綠色矩陣</option>
+                    <option value="cyber-blue" selected>濾鏡：賽博幽藍</option>
+                    <option value="neon-pink">濾鏡：霓虹極光</option>
+                    <option value="monochrome">濾鏡：科技黑白</option>
+                </select>
+            </div>
+            <div class="sound-toggle-wrapper">
+                <label class="sound-switch">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="sound-slider"></span>
+                </label>
+                <span class="sound-label">🔊 系統音效</span>
+            </div>
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="搜尋留言內容...">
+            </div>
+            <div class="color-filter">
+                <span>篩選顏色：</span>
+                <button class="filter-dot active" data-color="all" style="background: #ffffff; box-shadow: 0 0 10px #ffffff;"></button>
+                <button class="filter-dot" data-color="pink" style="background: #ff2a6d; box-shadow: 0 0 10px #ff2a6d;"></button>
+                <button class="filter-dot" data-color="cyan" style="background: #05d9e8; box-shadow: 0 0 10px #05d9e8;"></button>
+                <button class="filter-dot" data-color="purple" style="background: #b026ff; box-shadow: 0 0 10px #b026ff;"></button>
+                <button class="filter-dot" data-color="yellow" style="background: #f1c40f; box-shadow: 0 0 10px #f1c40f;"></button>
+                <button class="filter-dot" data-color="orange" style="background: #ff5722; box-shadow: 0 0 10px #ff5722;"></button>
+            </div>
+            <button id="clear-all-btn" class="action-btn-danger">一鍵清空</button>
+        </div>
+    </header>
+
+    <!-- Interactive board area -->
+    <main id="board-area">
+        <!-- Virtual Motion Sensor Ring (positioned at top right of the canvas stream) -->
+        <div id="sensor-ring" class="hidden">
+            <div class="sensor-wave-pulse"></div>
+            <span class="sensor-label">👋 揮手感應區</span>
+            <span class="sensor-sub">二林資處 特效</span>
+        </div>
+        <!-- Sticky notes will be dynamically inserted here -->
+    </main>
+
+    <!-- Floating Action Button -->
+    <button id="add-note-btn" class="fab-btn" title="新增留言貼紙">
+        <span class="plus-icon">+</span>
+    </button>
+
+    <!-- Add/Edit Note Modal -->
+    <div id="note-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <h2 id="modal-title">新增霓虹貼紙</h2>
+            <form id="note-form">
+                <div class="form-group">
+                    <label for="note-text">留言內容</label>
+                    <textarea id="note-text" placeholder="寫點什麼吧... (支援雙擊貼紙編輯)" required maxlength="150"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>挑選貼圖</label>
+                    <div class="emoji-selector">
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="📌" checked>
+                            <span class="emoji-emoji">📌</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="💡">
+                            <span class="emoji-emoji">💡</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="🎉">
+                            <span class="emoji-emoji">🎉</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="🚀">
+                            <span class="emoji-emoji">🚀</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="🔥">
+                            <span class="emoji-emoji">🔥</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="💖">
+                            <span class="emoji-emoji">💖</span>
+                        </label>
+                        <label class="emoji-option">
+                            <input type="radio" name="note-emoji" value="👾">
+                            <span class="emoji-emoji">👾</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>選擇霓虹色系</label>
+                    <div class="color-selector">
+                        <label class="color-option">
+                            <input type="radio" name="note-color" value="pink" checked>
+                            <span class="color-preview" style="background: #ff2a6d; box-shadow: 0 0 10px #ff2a6d;"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="note-color" value="cyan">
+                            <span class="color-preview" style="background: #05d9e8; box-shadow: 0 0 10px #05d9e8;"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="note-color" value="purple">
+                            <span class="color-preview" style="background: #b026ff; box-shadow: 0 0 10px #b026ff;"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="note-color" value="yellow">
+                            <span class="color-preview" style="background: #f1c40f; box-shadow: 0 0 10px #f1c40f;"></span>
+                        </label>
+                        <label class="color-option">
+                            <input type="radio" name="note-color" value="orange">
+                            <span class="color-preview" style="background: #ff5722; box-shadow: 0 0 10px #ff5722;"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>自拍照留言貼圖 (選用)</label>
+                    <div class="camera-input-area">
+                        <video id="modal-video" autoplay playsinline muted class="hidden"></video>
+                        <div id="snapshot-preview-container" class="hidden">
+                            <img id="snapshot-preview" src="">
+                        </div>
+                        <div class="camera-controls-row">
+                            <button type="button" id="start-modal-cam-btn" class="btn-secondary">啟動相機</button>
+                            <button type="button" id="capture-btn" class="btn-primary hidden">拍攝照片</button>
+                            <button type="button" id="retake-btn" class="btn-secondary hidden">重新拍攝</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" id="modal-cancel-btn" class="btn-secondary">取消</button>
+                    <button type="submit" id="modal-submit-btn" class="btn-primary">確認發布</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
