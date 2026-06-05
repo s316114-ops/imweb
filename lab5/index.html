@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>💜 BTS QUIZ - Interactive Quiz</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
     <!-- Background Canvas for Galaxy Particles -->
     <canvas id="particles-canvas"></canvas>
@@ -16,7 +20,7 @@
     <!-- Header navigation -->
     <header class="quiz-header">
         <a href="../index.html" class="back-btn">← 回到主頁</a>
-        
+
         <div class="sound-toggle-wrapper">
             <label class="sound-switch">
                 <input type="checkbox" id="sound-toggle" checked>
@@ -33,7 +37,7 @@
             <span class="theme-tag">💜 Purple BTS Theme 💜</span>
             <h1 class="purple-glitch" data-text="BTS QUIZ">BTS QUIZ</h1>
             <p class="subtitle">防彈少年團知識挑戰賽<br>測驗你的阿米極限！(共 15 題，每題限時 15 秒)</p>
-            
+
             <div class="action-row">
                 <button id="start-btn" class="btn-quiz-primary">開始挑戰</button>
             </div>
@@ -76,19 +80,19 @@
             <!-- Options (A, B, C, D) -->
             <div class="options-container">
                 <button class="option-btn" data-option="A">
-                    <span class="opt-label">A</span> 
+                    <span class="opt-label">A</span>
                     <span class="opt-text">選項 A</span>
                 </button>
                 <button class="option-btn" data-option="B">
-                    <span class="opt-label">B</span> 
+                    <span class="opt-label">B</span>
                     <span class="opt-text">選項 B</span>
                 </button>
                 <button class="option-btn" data-option="C">
-                    <span class="opt-label">C</span> 
+                    <span class="opt-label">C</span>
                     <span class="opt-text">選項 C</span>
                 </button>
                 <button class="option-btn" data-option="D">
-                    <span class="opt-label">D</span> 
+                    <span class="opt-label">D</span>
                     <span class="opt-text">選項 D</span>
                 </button>
             </div>
@@ -98,7 +102,7 @@
         <section id="result-view" class="quiz-card hidden">
             <span class="theme-tag">🎉 挑戰結束</span>
             <h2 class="result-title">測驗結算</h2>
-            
+
             <div class="score-card">
                 <div class="score-label">您的最終得分</div>
                 <div class="score-num"><span id="final-score">0</span> <span class="score-max">/ 100</span></div>
@@ -132,4 +136,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
