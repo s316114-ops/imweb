@@ -3,92 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab 5</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@700&display=swap');
-        body {
-            margin: 0;
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #14151f, #1e1e2f);
-            color: #ffffff;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-        }
-        .container {
-            text-align: center;
-            z-index: 2;
-            padding: 3rem;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            backdrop-filter: blur(15px);
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
-        }
-        h1 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
-            margin: 0 0 1rem 0;
-            background: linear-gradient(45deg, #ff2a6d, #feca57);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(255, 42, 109, 0.2);
-        }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        .btn-back {
-            display: inline-block;
-            text-decoration: none;
-            color: #ff2a6d;
-            border: 1px solid #ff2a6d;
-            padding: 0.8rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            background: rgba(255, 42, 109, 0.05);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .btn-back:hover {
-            background: #ff2a6d;
-            color: #14151f;
-            box-shadow: 0 0 25px rgba(255, 42, 109, 0.4);
-            transform: translateY(-2px);
-        }
-        /* Ambient light blobs */
-        .glow-orb {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: rgba(255, 42, 109, 0.12);
-            border-radius: 50%;
-            filter: blur(100px);
-            z-index: 1;
-            pointer-events: none;
-        }
-        .orb-1 { top: -10%; left: -10%; }
-        .orb-2 { bottom: -10%; right: -10%; background: rgba(254, 202, 87, 0.12); }
-    </style>
+    <title>💜 BTS QUIZ - Interactive Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="glow-orb orb-1"></div>
-    <div class="glow-orb orb-2"></div>
-    <div class="container">
-        <h1>Lab 5</h1>
-        <p>✨ 創意發想中...<br>Creative Space Under Construction</p>
-        <a href="../index.html" class="btn-back">← 返回主頁</a>
-    </div>
+    <!-- Background Canvas for Galaxy Particles -->
+    <canvas id="particles-canvas"></canvas>
+    <!-- Foreground Canvas for Confetti Celebration -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Header navigation -->
+    <header class="quiz-header">
+        <a href="../index.html" class="back-btn">← 回到主頁</a>
+        
+        <div class="sound-toggle-wrapper">
+            <label class="sound-switch">
+                <input type="checkbox" id="sound-toggle" checked>
+                <span class="sound-slider"></span>
+            </label>
+            <span class="sound-label">🔊 系統音效</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="quiz-container">
+        <!-- 1. Intro Page -->
+        <section id="intro-page" class="quiz-card active">
+            <span class="theme-tag">💜 Purple BTS Theme 💜</span>
+            <h1 class="purple-glitch" data-text="BTS QUIZ">BTS QUIZ</h1>
+            <p class="subtitle">防彈少年團知識挑戰賽<br>測驗你的阿米極限！(共 15 題，每題限時 15 秒)</p>
+            
+            <div class="action-row">
+                <button id="start-btn" class="btn-quiz-primary">開始挑戰</button>
+            </div>
+
+            <!-- Leaderboard list inside intro -->
+            <div class="leaderboard-section">
+                <h3>🏆 阿米榮譽榜 (Top 5)</h3>
+                <ol id="leaderboard-list">
+                    <!-- Loaded dynamically -->
+                </ol>
+            </div>
+        </section>
+
+        <!-- 2. Quiz View -->
+        <section id="quiz-view" class="quiz-card hidden">
+            <div class="quiz-header-row">
+                <span class="question-progress">第 <span id="current-question-num">1</span> / 15 題</span>
+                <span class="running-score-tag">目前得分: <span id="running-score">0</span></span>
+            </div>
+
+            <!-- Progress bar fill -->
+            <div class="progress-bar-container">
+                <div id="progress-bar-fill"></div>
+            </div>
+
+            <!-- Question Area -->
+            <div class="question-main-box">
+                <!-- Circular Timer -->
+                <div class="timer-container">
+                    <svg class="timer-svg" viewBox="0 0 80 80">
+                        <circle class="timer-bg" cx="40" cy="40" r="34"></circle>
+                        <circle id="timer-fill" class="timer-fill" cx="40" cy="40" r="34"></circle>
+                    </svg>
+                    <div id="timer-text" class="timer-text">15</div>
+                </div>
+
+                <div id="question-text" class="question-text">載入問題中...</div>
+            </div>
+
+            <!-- Options (A, B, C, D) -->
+            <div class="options-container">
+                <button class="option-btn" data-option="A">
+                    <span class="opt-label">A</span> 
+                    <span class="opt-text">選項 A</span>
+                </button>
+                <button class="option-btn" data-option="B">
+                    <span class="opt-label">B</span> 
+                    <span class="opt-text">選項 B</span>
+                </button>
+                <button class="option-btn" data-option="C">
+                    <span class="opt-label">C</span> 
+                    <span class="opt-text">選項 C</span>
+                </button>
+                <button class="option-btn" data-option="D">
+                    <span class="opt-label">D</span> 
+                    <span class="opt-text">選項 D</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. Result View -->
+        <section id="result-view" class="quiz-card hidden">
+            <span class="theme-tag">🎉 挑戰結束</span>
+            <h2 class="result-title">測驗結算</h2>
+            
+            <div class="score-card">
+                <div class="score-label">您的最終得分</div>
+                <div class="score-num"><span id="final-score">0</span> <span class="score-max">/ 100</span></div>
+                <div id="evaluation-text" class="evaluation-text">測驗結算中...</div>
+            </div>
+
+            <!-- Save Score Form -->
+            <div id="save-score-section" class="save-score-section hidden">
+                <p>恭喜進入前五名！留下你的阿米暱稱吧：</p>
+                <form id="save-score-form" class="save-score-form">
+                    <input type="text" id="player-name" placeholder="輸入阿米暱稱..." required maxlength="10">
+                    <button type="submit" class="btn-quiz-primary btn-save">登錄排行</button>
+                </form>
+            </div>
+
+            <!-- Actions row -->
+            <div class="actions-row">
+                <button id="restart-btn" class="btn-quiz-primary">再試一次</button>
+                <button id="menu-btn" class="btn-quiz-secondary">返回主畫面</button>
+            </div>
+
+            <!-- Detailed Question Review -->
+            <div class="review-section">
+                <h3>🔍 錯題與答案檢討</h3>
+                <div id="review-list" class="review-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
 </body>
 </html>

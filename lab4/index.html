@@ -25,7 +25,7 @@
         <a href="../index.html" class="back-btn">← 回到主頁</a>
         <div class="brand-title-group">
             <span class="school-badge">二林工商 資處科</span>
-            <h1 class="glitch" data-text="賽博感應留言板">賽博感應留言板</h1>
+            <h1 class="glitch" data-text="賽博互動看板">賽博互動看板</h1>
         </div>
         <div class="tools-container">
             <button id="toggle-bg-cam-btn" class="action-btn-cam">開啟背景鏡頭</button>
@@ -60,14 +60,86 @@
         </div>
     </header>
 
+    <!-- Cyber Marquee Announcement Bar -->
+    <div class="marquee-announcement-bar">
+        <span class="marquee-tag">📢 跑馬燈公告</span>
+        <div class="marquee-track">
+            <div class="marquee-content" id="marquee-text">歡迎來到賽博互動看板！雙擊任何便利貼即可進行編輯，右側有即時科技小工具，開啟背景鏡頭還能對準右上角揮手手勢感應喔！</div>
+        </div>
+        <button id="edit-marquee-btn" class="edit-marquee-btn" title="編輯公告">✏️ 編輯公告</button>
+    </div>
+
     <!-- Interactive board area -->
     <main id="board-area">
         <!-- Virtual Motion Sensor Ring (positioned at top right of the canvas stream) -->
         <div id="sensor-ring" class="hidden">
             <div class="sensor-wave-pulse"></div>
             <span class="sensor-label">👋 揮手感應區</span>
-            <span class="sensor-sub">二林資處 特效</span>
+            <span class="sensor-sub">揮手/滑鼠滑入</span>
         </div>
+        
+        <!-- Interactive Widgets Panel -->
+        <div id="widgets-panel" class="widgets-panel">
+            <div class="widget-header">
+                <h3>🤖 科技儀表板</h3>
+                <button id="toggle-widgets-btn" class="toggle-widgets-btn" title="收摺儀表板">▶</button>
+            </div>
+            <div class="widgets-content">
+                <!-- Widget: Clock -->
+                <div class="widget-card widget-clock">
+                    <div class="widget-title">🕒 系統時間</div>
+                    <div id="cyber-time" class="cyber-time-val">00:00:00</div>
+                    <div id="cyber-date" class="cyber-date-val">2088 / 08 / 08</div>
+                </div>
+                
+                <!-- Widget: Weather -->
+                <div class="widget-card widget-weather">
+                    <div class="widget-title">🌤️ 氣象監測</div>
+                    <div class="weather-selector-row">
+                        <span id="current-weather-status">晴天 (Clear)</span>
+                        <span id="current-temp">28°C</span>
+                    </div>
+                    <div class="weather-btn-row">
+                        <button class="weather-opt-btn active" data-weather="clear" title="晴天">☀️</button>
+                        <button class="weather-opt-btn" data-weather="rain" title="霓虹雨">🌧️</button>
+                        <button class="weather-opt-btn" data-weather="storm" title="磁暴">⚡</button>
+                    </div>
+                </div>
+                
+                <!-- Widget: Statistics -->
+                <div class="widget-card widget-stats">
+                    <div class="widget-title">📊 看板數據</div>
+                    <div class="stats-row">
+                        <span>貼紙總數:</span>
+                        <span id="stats-total-notes">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>累計按讚:</span>
+                        <span id="stats-total-likes">0</span>
+                    </div>
+                    <div class="stats-row">
+                        <span>訪客計數:</span>
+                        <span id="stats-visitor-count">0</span>
+                    </div>
+                </div>
+
+                <!-- Widget: Instructions -->
+                <div class="widget-card widget-instructions">
+                    <div class="widget-title">📖 使用指南</div>
+                    <div class="instructions-list">
+                        <div><strong>📝 貼紙：</strong>點擊右下角 <span style="color:var(--neon-cyan)">+</span> 按鈕。雙擊貼紙可編輯內容。</div>
+                        <div style="margin-top:0.4rem"><strong>❤️ 點讚：</strong>點擊貼紙下方 ❤️，噴發霓虹飄浮愛心。</div>
+                        <div style="margin-top:0.4rem"><strong>💬 留言：</strong>點擊 💬 展開留言板，輸入文字按 Enter 送出。</div>
+                        <div style="margin-top:0.4rem"><strong>🌤️ 氣候：</strong>點擊天氣按鈕，切換背景粒子特效。</div>
+                        <div style="margin-top:0.4rem"><strong>👋 揮手：</strong>開啟背景鏡頭，在右上角「揮手感應區」晃動（或用滑鼠游標滑過），可觸發掃頻音效、變更濾鏡並噴發隨機表情！</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hidden canvas for webcam motion frame comparison -->
+        <canvas id="motion-canvas" width="80" height="80" class="hidden"></canvas>
+        
         <!-- Sticky notes will be dynamically inserted here -->
     </main>
 
