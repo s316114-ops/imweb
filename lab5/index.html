@@ -1,71 +1,107 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💜 BTS QUIZ - Interactive Quiz</title>
+    <title>💜 BTS QUIZ - 防彈少年團互動測驗與留言板</title>
     <link rel="stylesheet" href="style.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <!-- Background Canvas for Galaxy Particles -->
+    <!-- 動態粒子背景 Canvas -->
     <canvas id="particles-canvas"></canvas>
-    <!-- Foreground Canvas for Confetti Celebration -->
+    <!-- 勝利彩帶 Canvas -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Header navigation -->
+    <!-- 頂部導覽列 -->
     <header class="quiz-header">
         <a href="../index.html" class="back-btn">← 回到主頁</a>
+        
+        <div class="header-right-controls">
+            <!-- 使用說明浮動鈕 -->
+            <div class="instructions-wrapper">
+                <button id="instructions-btn" class="icon-btn">❓ 使用說明</button>
+                <div id="instructions-dropdown" class="instructions-dropdown hidden">
+                    <button id="close-instructions-btn" class="close-dropdown-btn" aria-label="關閉使用說明">&times;</button>
+                    <h4>💜 網頁使用指南</h4>
+                    <p>歡迎光臨防彈與阿米的互動空間！</p>
+                    <ul>
+                        <li><strong>挑戰測驗</strong>：點擊「開始挑戰」進入 15 題 BTS 知識大問答。</li>
+                        <li><strong>限時作答</strong>：每題限時 15 秒，逾時自動判定為答錯並顯示答案。</li>
+                        <li><strong>阿米留言板</strong>：首頁下方為留言牆，輸入暱稱與留言內容即可發佈彩色留言貼紙！</li>
+                        <li><strong>登錄榮譽榜</strong>：測驗分數達 80 分以上可將暱稱登錄至頂部榮譽榜。</li>
+                        <li><strong>音效開關</strong>：點擊「🔊 音效」開關可以開啟/關閉答題的反饋音效。</li>
+                    </ul>
+                </div>
+            </div>
 
-        <div class="sound-toggle-wrapper">
-            <label class="sound-switch">
-                <input type="checkbox" id="sound-toggle" checked>
-                <span class="sound-slider"></span>
-            </label>
-            <span class="sound-label">🔊 系統音效</span>
+            <!-- 音效開關 -->
+            <div class="sound-toggle-wrapper">
+                <span class="sound-label">🔊 音效</span>
+                <label class="sound-switch">
+                    <input type="checkbox" id="sound-toggle" checked>
+                    <span class="sound-slider"></span>
+                </label>
+            </div>
         </div>
     </header>
 
-    <!-- Main Container -->
+    <!-- 主容器 -->
     <main class="quiz-container">
-        <!-- 1. Intro Page -->
+        
+        <!-- 1. 開始畫面 -->
         <section id="intro-page" class="quiz-card active">
-            <span class="theme-tag">💜 Purple BTS Theme 💜</span>
+            <span class="theme-tag">💜 BTS ARMY SPECIAL 💜</span>
             <h1 class="purple-glitch" data-text="BTS QUIZ">BTS QUIZ</h1>
-            <p class="subtitle">防彈少年團知識挑戰賽<br>測驗你的阿米極限！(共 15 題，每題限時 15 秒)</p>
+            <p class="subtitle">防彈少年團進階挑戰賽<br>考驗你對防彈的了解程度！(共 15 題，每題限時 15 秒)</p>
 
             <div class="action-row">
                 <button id="start-btn" class="btn-quiz-primary">開始挑戰</button>
             </div>
 
-            <!-- Leaderboard list inside intro -->
+            <!-- 排行榜區塊 -->
             <div class="leaderboard-section">
                 <h3>🏆 阿米榮譽榜 (Top 5)</h3>
                 <ol id="leaderboard-list">
-                    <!-- Loaded dynamically -->
+                    <!-- 動態載入 -->
                 </ol>
+            </div>
+
+            <!-- 阿米留言看板區塊 -->
+            <div class="message-board-section">
+                <h3>💜 阿米互動留言牆 (ARMY Fan Wall)</h3>
+                
+                <!-- 留言輸入表單 -->
+                <form id="message-form" class="message-form">
+                    <div class="input-group">
+                        <input type="text" id="msg-author" placeholder="你的暱稱 (限10字)" required maxlength="10">
+                        <input type="text" id="msg-content" placeholder="給防彈或阿米留言... (限40字)" required maxlength="40">
+                    </div>
+                    <button type="submit" class="btn-quiz-primary btn-post">發佈留言</button>
+                </form>
+
+                <!-- 留言貼紙牆 -->
+                <div id="message-wall" class="message-wall">
+                    <!-- 動態生成貼紙 -->
+                </div>
             </div>
         </section>
 
-        <!-- 2. Quiz View -->
+        <!-- 2. 測驗畫面 -->
         <section id="quiz-view" class="quiz-card hidden">
             <div class="quiz-header-row">
                 <span class="question-progress">第 <span id="current-question-num">1</span> / 15 題</span>
-                <span class="running-score-tag">目前得分: <span id="running-score">0</span></span>
+                <span class="running-score-tag">目前積分: <span id="running-score">0</span></span>
             </div>
 
-            <!-- Progress bar fill -->
+            <!-- 進度條 -->
             <div class="progress-bar-container">
                 <div id="progress-bar-fill"></div>
             </div>
 
-            <!-- Question Area -->
+            <!-- 題目區域 -->
             <div class="question-main-box">
-                <!-- Circular Timer -->
+                <!-- 圓形計時器 -->
                 <div class="timer-container">
                     <svg class="timer-svg" viewBox="0 0 80 80">
                         <circle class="timer-bg" cx="40" cy="40" r="34"></circle>
@@ -73,11 +109,10 @@
                     </svg>
                     <div id="timer-text" class="timer-text">15</div>
                 </div>
-
                 <div id="question-text" class="question-text">載入問題中...</div>
             </div>
 
-            <!-- Options (A, B, C, D) -->
+            <!-- 選項按鈕區 -->
             <div class="options-container">
                 <button class="option-btn" data-option="A">
                     <span class="opt-label">A</span>
@@ -98,7 +133,7 @@
             </div>
         </section>
 
-        <!-- 3. Result View -->
+        <!-- 3. 結算畫面 -->
         <section id="result-view" class="quiz-card hidden">
             <span class="theme-tag">🎉 挑戰結束</span>
             <h2 class="result-title">測驗結算</h2>
@@ -109,32 +144,32 @@
                 <div id="evaluation-text" class="evaluation-text">測驗結算中...</div>
             </div>
 
-            <!-- Save Score Form -->
+            <!-- 登錄排行表單 -->
             <div id="save-score-section" class="save-score-section hidden">
                 <p>恭喜進入前五名！留下你的阿米暱稱吧：</p>
                 <form id="save-score-form" class="save-score-form">
-                    <input type="text" id="player-name" placeholder="輸入阿米暱稱..." required maxlength="10">
+                    <input type="text" id="player-name" placeholder="輸入您的暱稱..." required maxlength="10">
                     <button type="submit" class="btn-quiz-primary btn-save">登錄排行</button>
                 </form>
             </div>
 
-            <!-- Actions row -->
+            <!-- 操作按鈕 -->
             <div class="actions-row">
                 <button id="restart-btn" class="btn-quiz-primary">再試一次</button>
                 <button id="menu-btn" class="btn-quiz-secondary">返回主畫面</button>
             </div>
 
-            <!-- Detailed Question Review -->
+            <!-- 錯題檢討區 -->
             <div class="review-section">
                 <h3>🔍 錯題與答案檢討</h3>
                 <div id="review-list" class="review-list">
-                    <!-- Populated dynamically -->
+                    <!-- 動態載入 -->
                 </div>
             </div>
         </section>
+
     </main>
 
     <script src="script.js"></script>
 </body>
-
 </html>
